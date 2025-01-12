@@ -86,10 +86,19 @@
   <!-- Answer with Place Values -->
   <div class="p-6 bg-[#1E1E1E] rounded-xl border-2 border-[#2A2A2A]">
     <h4 class="text-white font-medium mb-4">Final Answer with Place Values</h4>
-    <div class="flex flex-wrap gap-4">
+    <p class="text-[#a7b1b7] mb-4">
+      {#if toBase === 'binary'}
+        Read from left to right: Most significant bit (MSB) to least significant bit (LSB)
+      {:else if toBase === 'hexadecimal'}
+        Read from left to right: Most significant digit to least significant digit
+      {:else}
+        Read from left to right: Highest place value to lowest place value
+      {/if}
+    </p>
+    <div class="flex flex-wrap gap-2 sm:gap-4 justify-center">
       {#each correctAnswer.split('') as digit, i}
         <div class="flex flex-col items-center gap-1">
-          <span class="text-white text-xl">{digit}</span>
+          <span class="text-white text-lg sm:text-xl">{digit}</span>
           <span class="text-[#ba0c2f]">▼</span>
           <span class="text-[#a7b1b7] text-xs">{@html formatPlaceValue(toBase, correctAnswer.length - i - 1)}</span>
         </div>
@@ -102,6 +111,9 @@
     <!-- Converting to Decimal -->
     <div class="p-6 bg-[#1E1E1E] rounded-xl border-2 border-[#2A2A2A]">
       <h4 class="text-white font-medium mb-4">Converting to Decimal</h4>
+      <p class="text-[#a7b1b7] mb-4">
+        Start from the rightmost digit (least significant) and work left, multiplying each digit by its place value
+      </p>
       <div class="space-y-4">
         <!-- Show each digit's calculation -->
         {#each number.split('').reverse() as digit, i}
@@ -129,8 +141,11 @@
     <!-- Converting from Decimal -->
     <div class="p-6 bg-[#1E1E1E] rounded-xl border-2 border-[#2A2A2A]">
       <h4 class="text-white font-medium mb-4">Converting from Decimal using Division</h4>
-      <div class="overflow-x-auto">
-        <table class="w-full">
+      <p class="text-[#a7b1b7] mb-4">
+        Perform divisions from top to bottom, then read remainders from bottom to top to get your answer
+      </p>
+      <div class="overflow-x-auto -mx-4 sm:mx-0">
+        <table class="w-full min-w-[400px]">
           <thead>
             <tr>
               <th class="text-left p-3 text-[#a7b1b7]">Number</th>
@@ -153,7 +168,7 @@
           </tbody>
         </table>
       </div>
-      <p class="mt-4 text-[#a7b1b7]">Read remainders from bottom to top to get: 
+      <p class="mt-4 text-[#a7b1b7]">Reading remainders bottom to top gives us: 
         <span class="text-white font-bold">{correctAnswer}</span>
       </p>
     </div>
@@ -176,7 +191,7 @@
   {#if toBase === 'hexadecimal'}
     <div class="p-6 bg-[#1E1E1E] rounded-xl border-2 border-[#2A2A2A]">
       <h4 class="text-white font-medium mb-4">Hexadecimal Values</h4>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 justify-center sm:justify-start">
         {#each correctAnswer.split('') as digit}
           <div class="bg-[#2A2A2A] px-3 py-2 rounded flex gap-2">
             <span class="text-white font-bold">{digit}</span>

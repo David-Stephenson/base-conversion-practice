@@ -84,20 +84,30 @@
   generateNewNumber();
 </script>
 
-<div class="min-h-screen bg-[#121212] p-8">
-  <div class="max-w-3xl mx-auto">
+<svelte:head>
+  <title>
+    Base Conversion Practice - {selectedConversion.label} | OSU ECE 2060
+  </title>
+  <meta 
+    name="description" 
+    content="Practice converting numbers between different bases. A tool for OSU ECE 2060 students."
+  />
+</svelte:head>
+
+<div class="min-h-screen bg-[#121212] p-4 sm:p-6 md:p-8">
+  <div class="max-w-3xl mx-auto w-full">
     <div class="text-center mb-12">
-      <h1 class="text-5xl font-bold text-white mb-3">Base Conversion</h1>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3">Base Conversion</h1>
       <p class="text-[#ba0c2f] text-lg font-medium tracking-wide">OSU ECE 2060</p>
     </div>
     
-    <div class="bg-[#1E1E1E] rounded-2xl shadow-2xl p-8">
-      <div class="flex justify-between items-center mb-8">
+    <div class="bg-[#1E1E1E] rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 mb-8">
         <div class="flex items-center gap-6">
           <select 
             bind:value={selectedConversion}
             on:change={generateNewNumber}
-            class="px-6 py-3 rounded-xl bg-[#2A2A2A] text-white border-2 border-[#2A2A2A] focus:border-[#ba0c2f] transition-colors outline-none text-sm font-medium"
+            class="w-full sm:w-auto px-4 sm:px-6 py-3 rounded-xl bg-[#2A2A2A] text-white border-2 border-[#2A2A2A] focus:border-[#ba0c2f] transition-colors outline-none text-sm font-medium"
           >
             {#each conversionTypes as type}
               <option value={type}>{type.label}</option>
@@ -105,16 +115,25 @@
           </select>
         </div>
         
-        <div class="bg-[#2A2A2A] px-6 py-3 rounded-xl">
+        <div class="bg-[#2A2A2A] px-4 sm:px-6 py-3 rounded-xl w-full sm:w-auto text-center">
           <span class="text-[#a7b1b7] mr-2 text-sm font-medium">Score</span>
           <span class="text-[#ba0c2f] font-bold text-xl">{score}</span>
         </div>
       </div>
 
-      <div class="text-center mb-10 bg-[#2A2A2A] p-8 rounded-2xl">
+      <div class="text-center mb-6 sm:mb-10 bg-[#2A2A2A] p-4 sm:p-6 md:p-8 rounded-2xl">
         <p class="text-[#a7b1b7] mb-4 text-sm font-medium uppercase tracking-wider">Convert this number</p>
-        <p class="text-5xl font-mono font-bold text-white mb-4 tracking-wider">{currentNumber}</p>
+        <p class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white mb-4 tracking-wider break-all">{currentNumber}</p>
         <p class="text-[#a7b1b7] text-sm font-medium">From {selectedConversion.from} to {selectedConversion.to}</p>
+        <p class="text-[#a7b1b7] text-sm font-medium mt-4">
+          {#if selectedConversion.from === 'binary'}
+            Read from left to right: Most significant bit (MSB) to least significant bit (LSB)
+          {:else if selectedConversion.from === 'hexadecimal'}
+            Read from left to right: Most significant digit to least significant digit
+          {:else}
+            Read from left to right: Highest place value to lowest place value
+          {/if}
+        </p>
       </div>
 
       <div class="mb-8">
@@ -128,11 +147,11 @@
         />
       </div>
 
-      <div class="flex justify-between gap-4 mb-8">
+      <div class="flex flex-col sm:flex-row justify-between gap-4 mb-8">
         <button
           on:click={checkAnswer}
           disabled={attempts >= maxAttempts || isCorrect}
-          class="flex-1 bg-[#ba0c2f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#8a0923] transition-colors {
+          class="w-full sm:flex-1 bg-[#ba0c2f] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-medium hover:bg-[#8a0923] transition-colors {
             attempts >= maxAttempts || isCorrect ? 'opacity-50 cursor-not-allowed' : ''
           }"
         >
@@ -140,7 +159,7 @@
         </button>
         <button
           on:click={generateNewNumber}
-          class="px-8 py-4 rounded-xl font-medium border-2 border-[#2A2A2A] text-white hover:border-[#ba0c2f] transition-colors"
+          class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-medium border-2 border-[#2A2A2A] text-white hover:border-[#ba0c2f] transition-colors"
         >
           New Number
         </button>
@@ -184,7 +203,7 @@
 
     <footer class="mt-12 text-center text-[#a7b1b7] text-sm">
       <p>
-        Created with 🌰 at The Ohio State University by David Stephenson
+        Created with 🌰 at The Ohio State University by <a href="https://davidstephenson.net" class="text-[#ba0c2f]">David Stephenson</a>
       </p>
     </footer>
   </div>
