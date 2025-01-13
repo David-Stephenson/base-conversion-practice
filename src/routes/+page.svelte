@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import ConversionSolution from '$lib/components/ConversionSolution.svelte';
+  import { encouragementMessages, successMessages, streakMessages, newProblemMessages, getRandomMessage } from '$lib/messages';
   
   type ConversionType = {
     from: 'decimal' | 'binary' | 'hexadecimal' | 'octal';
@@ -24,14 +25,18 @@
   let maxAttempts: number = 3;
   let showSolution: boolean = false;
   let isCorrect: boolean | null = null;
-  let score: number = 0;
+  let streak: number = 0;
   let correctAnswer: string = '';
+  let previousAnswers: Set<string> = new Set();
+  let currentMessage: string = getRandomMessage(newProblemMessages);
 
   function generateNewNumber() {
     showSolution = false;
     isCorrect = null;
     userAnswer = '';
     attempts = 0;
+    previousAnswers.clear();
+    currentMessage = getRandomMessage(newProblemMessages);
 
     const randomNum = Math.floor(Math.random() * 255);
 
@@ -57,12 +62,18 @@
   function checkAnswer() {
     if (attempts >= maxAttempts) return;
     if (!userAnswer.trim()) return; // Don't check empty answers
+    if (previousAnswers.has(userAnswer.trim().toUpperCase())) return; // Don't check repeated answers
     
+    previousAnswers.add(userAnswer.trim().toUpperCase());
     isCorrect = userAnswer.trim().toUpperCase() === correctAnswer.toUpperCase();
     attempts++;
 
     if (isCorrect) {
-      score += Math.max(4 - attempts, 1); // More points for fewer attempts
+      streak += 1; // Increase streak on correct answer
+      currentMessage = streak > 1 ? getRandomMessage(streakMessages) : getRandomMessage(successMessages);
+    } else {
+      streak = 0; // Reset streak on wrong answer
+      currentMessage = getRandomMessage(encouragementMessages);
     }
     
     if (attempts >= maxAttempts || isCorrect) {
@@ -115,9 +126,12 @@
           </select>
         </div>
         
-        <div class="bg-[#2A2A2A] px-4 sm:px-6 py-3 rounded-xl w-full sm:w-auto text-center">
-          <span class="text-[#a7b1b7] mr-2 text-sm font-medium">Score</span>
-          <span class="text-[#ba0c2f] font-bold text-xl">{score}</span>
+        <div class="bg-[#2A2A2A] px-4 sm:px-6 py-3 rounded-xl w-full sm:w-auto text-center flex items-center justify-center gap-2">
+          <span class="text-[#a7b1b7] text-sm font-medium">Streak</span>
+          <div class="flex items-center gap-1">
+            <span class="text-[#ba0c2f] font-bold text-xl">{streak}</span>
+            <span class="text-[#ba0c2f]">🔥</span>
+          </div>
         </div>
       </div>
 
@@ -174,17 +188,13 @@
           }"
           transition:fade
         >
-          {#if isCorrect}
-            <p class="text-lg font-medium">Correct! Great job! 🎉</p>
-          {:else}
-            <p class="text-lg font-medium">
-              {#if attempts >= maxAttempts}
-                No more attempts left. The correct answer was: <span class="font-mono font-bold">{correctAnswer}</span>
-              {:else}
-                Not quite right. Try again! ({maxAttempts - attempts} attempts remaining)
-              {/if}
-            </p>
-          {/if}
+          <p class="text-lg font-medium">
+            {#if attempts >= maxAttempts}
+              No more attempts left. The correct answer was: <span class="font-mono font-bold">{correctAnswer}</span>
+            {:else}
+              {currentMessage} ({maxAttempts - attempts} attempts remaining)
+            {/if}
+          </p>
         </div>
       {/if}
 
@@ -199,6 +209,25 @@
           />
         </div>
       {/if}
+    </div>
+
+    <div class="mt-12 mb-8 text-center">
+      <p class="text-[#a7b1b7] mb-4">Reference Tables:</p>
+      <div class="flex justify-center gap-4">
+        <a 
+          href="/tables/binary" 
+          class="text-[#ba0c2f] hover:text-white transition-colors"
+        >
+          Binary Table
+        </a>
+        <span class="text-[#a7b1b7]">|</span>
+        <a 
+          href="/tables/hex" 
+          class="text-[#ba0c2f] hover:text-white transition-colors"
+        >
+          Hex Table
+        </a>
+      </div>
     </div>
 
     <footer class="mt-12 text-center text-[#a7b1b7] text-sm">
